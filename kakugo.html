@@ -216,15 +216,20 @@
         }
         .placeholder-image {
             background-color: var(--medium-grey);
-            color: var(--polar-white);
+            color: var(--polar-white); /* Affects SVG stroke/fill if using currentColor */
             display: flex;
             align-items: center;
             justify-content: center;
             text-align: center;
             border-radius: 0.375rem;
             border: 2px dashed var(--flame-orange);
-            font-style: italic;
+            /* font-style: italic; Removed to avoid affecting SVG text too much */
             min-height: 100px; /* Ensure placeholder has some height */
+            overflow: hidden; /* Ensure SVG fits nicely */
+        }
+        .placeholder-image svg text {
+            font-family: 'Inter', sans-serif; /* Ensure SVG text uses the main font */
+            font-style: normal; /* Override italic from placeholder if any was inherited */
         }
 
     </style>
@@ -242,8 +247,6 @@
                 <a href="singin.html" class="nav-link">Inscription</a>
                 <a href="singup.html" class="nav-link">Connexion</a>
                 <a href="kakugo.html" class="nav-link active">KAKUGO</a>
-
-                
                 <button class="nav-link hidden" id="nav-logout">Déconnexion</button>
             </nav>
             <div class="md:hidden">
@@ -259,8 +262,6 @@
                 <a href="singin.html" class="nav-link">Inscription</a>
                 <a href="singup.html" class="nav-link">Connexion</a>
                 <a href="dev/kakugo.html" class="nav-link active">KAKUGO</a>
-
-                
                 <button class="nav-link hidden" id="nav-logout">Déconnexion</button>
             </div>
         </div>
@@ -269,7 +270,6 @@
     <div class="tab-bar" id="kakugo-tab-bar">
         <button class="tab-button active" data-tab="overview">Vue d'Ensemble</button>
         <button class="tab-button" data-tab="gameplay">Gameplay</button>
-        <button class="tab-button" data-tab="abilities">Compétences</button>
         <button class="tab-button" data-tab="environment">Environnement</button>
         <button class="tab-button" data-tab="narrative">Narratif</button>
         <button class="tab-button" data-tab="art">Artistique</button>
@@ -279,7 +279,7 @@
     <main class="container mx-auto px-2 md:px-6 pb-8">
         <div id="tab-overview" class="tab-content active">
             <div class="content-block">
-                <img src="https://i.imgur.com/r5If05P.png" alt="Logo KAKUGO" class="game-logo" id="kakugo_logo_img_src" data-default-src="https://i.imgur.com/r5If05P.png">
+                <img src="https://i.imgur.com/r5If05P.png" alt="Logo KAKUGO" class="game-logo" id="kakugo_logo_img_src" data-default-src="https://i.imgur.com/r5If05P.png" onerror="this.onerror=null; if (this.src !== this.dataset.defaultSrc) { this.src = this.dataset.defaultSrc; } else { this.src='https://placehold.co/250x150/393E46/F5F5F5?text=Logo+Error'; }">
                 <h1 class="text-4xl font-black text-center mb-6 editable-text" id="kakugo_title">KAKUGO</h1>
                 <p class="text-center text-lg italic mb-8 editable-text" id="kakugo_meaning">(Signifie “Résolution” en japonais)</p>
                 
@@ -305,7 +305,7 @@
                 <p class="editable-text" id="gameplay_controls_interactions">Le joueur peut interagir avec les mondes et les entités par des actions simples ou des combinaisons d'entrées multiples. Les interactions sont variées mais il existe certains schémas. Il peut utiliser des capacités (cf : Système de capacités) qui permettent au joueur de combattre des ennemis ou de résoudre des énigmes.</p>
                 <p class="editable-text" id="gameplay_ui">L'interface utilisateur est composée d'un HUD qui affiche des informations importantes pour le joueur (santé, énergie, mini-carte), d'un menu de gameplay qui permet au joueur d'accéder à certains systèmes et d'un menu système qui permet au joueur de modifier les paramètres (graphismes, sons).</p>
                 <p class="editable-text" id="gameplay_input_preference">Kakugo est un jeu pensé pour être joué avec une manette, mais un clavier/souris peut également être utilisé.</p>
-                <img src="https://i.imgur.com/p0AlxT6.png" alt="Schéma Manette Xbox" class="mx-auto my-4" id="gameplay_gamepad_img_src" data-default-src="https://i.imgur.com/p0AlxT6.png">
+                <img src="https://i.imgur.com/p0AlxT6.png" alt="Schéma Manette Xbox" class="mx-auto my-4" id="gameplay_gamepad_img_src" data-default-src="https://i.imgur.com/p0AlxT6.png" onerror="this.onerror=null; if (this.src !== this.dataset.defaultSrc) { this.src = this.dataset.defaultSrc; } else { this.src='https://placehold.co/600x300/393E46/F5F5F5?text=Gamepad+Error'; }">
             </div>
             <div class="content-block">
                 <h2>Comportement de la Caméra</h2>
@@ -314,9 +314,43 @@
                 <p class="editable-text" id="camera_effects">Certains effets de caméra sont liés aux actions du joueur pour les rendre plus percutantes ou ajouter un retour à une situation. Cela peut être des reflets de lentille, des secousses, du vignettage, du flou, etc…</p>
                 <p class="editable-text" id="camera_cutscenes">Pendant une cinématique narrative, la caméra peut changer de point de vue, de position, de rotation et de cible pour créer plus de possibilités et améliorer la qualité de la scène.</p>
                 <div class="grid md:grid-cols-3 gap-4 mt-4">
-                    <div class="placeholder-image h-40 editable-text" id="camera_nav_view_desc">Vue caméra de navigation (placeholder)</div>
-                    <div class="placeholder-image h-40 editable-text" id="camera_combat_view_desc">Vue caméra de combat (placeholder)</div>
-                    <div class="placeholder-image h-40 editable-text" id="camera_cinematic_view_desc">Vue caméra cinématique (placeholder)</div>
+                    <div class="placeholder-image h-40 editable-text" id="camera_nav_view_desc_container">
+                        <svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet" class="w-full h-full">
+                            <title>Schéma Vue Navigation</title>
+                            <desc>Personnage vu de dos par une caméra à la troisième personne, positionnée derrière et légèrement au-dessus.</desc>
+                            <circle cx="50" cy="70" r="8" fill="var(--polar-white)"/>
+                            <rect x="42" y="78" width="16" height="20" rx="4" fill="var(--polar-white)"/>
+                            <rect x="46" y="35" width="8" height="12" rx="2" fill="var(--medium-grey)" stroke="var(--polar-white)" stroke-width="1.5"/>
+                            <polygon points="46,41 42,43 46,45" fill="var(--polar-white)" /> <line x1="50" y1="47" x2="50" y2="68" stroke="var(--flame-orange)" stroke-width="1" stroke-dasharray="2,2"/>
+                            <text x="50" y="25" font-size="9" fill="var(--polar-white)" text-anchor="middle">Caméra Navigation</text>
+                            <text x="50" y="32" font-size="7" fill="var(--polar-white)" text-anchor="middle">(3ème personne)</text>
+                        </svg>
+                    </div>
+                    <div class="placeholder-image h-40 editable-text" id="camera_combat_view_desc_container">
+                        <svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet" class="w-full h-full">
+                            <title>Schéma Vue Combat</title>
+                            <desc>Personnage vu de dessus par une caméra top-down, avec un indicateur de zone.</desc>
+                             <circle cx="50" cy="60" r="8" fill="var(--polar-white)"/>
+                            <rect x="42" y="68" width="16" height="20" rx="4" fill="var(--polar-white)"/>
+                            <circle cx="50" cy="25" r="7" fill="var(--medium-grey)" stroke="var(--polar-white)" stroke-width="1.5"/>
+                            <circle cx="50" cy="25" r="2.5" fill="var(--polar-white)"/> <line x1="50" y1="32" x2="50" y2="50" stroke="var(--flame-orange)" stroke-width="1" stroke-dasharray="2,2"/>
+                            <text x="50" y="15" font-size="9" fill="var(--polar-white)" text-anchor="middle">Caméra Combat</text>
+                            <text x="50" y="22" font-size="7" fill="var(--polar-white)" text-anchor="middle">(Vue de Dessus)</text>
+                        </svg>
+                    </div>
+                    <div class="placeholder-image h-40 editable-text" id="camera_cinematic_view_desc_container">
+                        <svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet" class="w-full h-full">
+                            <title>Schéma Vue Cinématique</title>
+                            <desc>Caméra filmant une scène avec un angle dynamique pour une cinématique.</desc>
+                            <rect x="10" y="40" width="20" height="12" rx="2" fill="var(--medium-grey)" stroke="var(--polar-white)" stroke-width="1.5"/>
+                            <circle cx="20" cy="46" r="3" fill="var(--polar-white)"/> <path d="M12 52 l5 8 l5 -8 Z" fill="var(--medium-grey)" stroke="var(--polar-white)" stroke-width="1"/> <rect x="55" y="30" width="35" height="45" rx="5" fill="var(--light-grey-card)" stroke="var(--polar-white)" stroke-width="1.5" opacity="0.8"/>
+                            <circle cx="72" cy="52" r="7" fill="var(--polar-white)" opacity="0.6"/>
+                            <line x1="30" y1="44" x2="55" y2="35" stroke="var(--flame-orange)" stroke-width="1" stroke-dasharray="2,2"/>
+                            <line x1="30" y1="48" x2="55" y2="70" stroke="var(--flame-orange)" stroke-width="1" stroke-dasharray="2,2"/>
+                            <text x="50" y="88" font-size="9" fill="var(--polar-white)" text-anchor="middle">Vue Cinématique</text>
+                             <text x="50" y="95" font-size="7" fill="var(--polar-white)" text-anchor="middle">(Angle spécifique)</text>
+                        </svg>
+                    </div>
                 </div>
             </div>
 
@@ -334,7 +368,7 @@
                     <li class="editable-list-item"><strong>Tier 2 :</strong> La portée et la force de poussée d'Ethereal Slash sont augmentées d'un montant brut.</li>
                     <li class="editable-list-item"><strong>Tier 3 :</strong> Ethereal Slash enflamme les entités touchées, infligeant des dégâts périodiques par intervalle aux cibles affectées pendant un nombre fixe de secondes.</li>
                 </ul>
-                <img src="https://i.imgur.com/sY2nf7A.png" alt="Ethereal Slash" id="ability_ethereal_slash_img_src" data-default-src="https://i.imgur.com/sY2nf7A.png">
+                <img src="https://i.imgur.com/sY2nf7A.png" alt="Ethereal Slash" id="ability_ethereal_slash_img_src" data-default-src="https://i.imgur.com/sY2nf7A.png" onerror="this.onerror=null; if (this.src !== this.dataset.defaultSrc) { this.src = this.dataset.defaultSrc; } else { this.src='https://placehold.co/400x200/393E46/F5F5F5?text=Ethereal+Slash+Error'; }">
             </div>
 
             <div class="content-block">
@@ -345,7 +379,7 @@
                     <li class="editable-list-item"><strong>Tier 2 :</strong> En visant, le projectile charge sa puissance, augmentant sa vitesse de lancement, ses dégâts et sa portée.</li>
                     <li class="editable-list-item"><strong>Tier 3 :</strong> À l'impact, le projectile explose et inflige des dégâts aux ennemis à portée, les repoussant et les étourdissant pendant une courte période.</li>
                 </ul>
-                <img src="https://i.imgur.com/gA20j8p.png" alt="Mind Spike" id="ability_mind_spike_img_src" data-default-src="https://i.imgur.com/gA20j8p.png">
+                <img src="https://i.imgur.com/gA20j8p.png" alt="Mind Spike" id="ability_mind_spike_img_src" data-default-src="https://i.imgur.com/gA20j8p.png" onerror="this.onerror=null; if (this.src !== this.dataset.defaultSrc) { this.src = this.dataset.defaultSrc; } else { this.src='https://placehold.co/400x200/393E46/F5F5F5?text=Mind+Spike+Error'; }">
             </div>
 
             <div class="content-block">
@@ -356,7 +390,7 @@
                     <li class="editable-list-item"><strong>Tier 2 :</strong> Les entités touchées sont marquées de sangsue ; en les frappant, le joueur peut récupérer de la santé.</li>
                     <li class="editable-list-item"><strong>Tier 3 :</strong> Toutes les entités touchées par l'explosion commencent à léviter ; si elles sont touchées, elles sont projetées avec force dans la direction du coup. Lorsqu'elles heurtent quelque chose, elles explosent, infligeant d'énormes dégâts.</li>
                 </ul>
-                <img src="https://i.imgur.com/D065n7g.png" alt="Feeling Facture" id="ability_feeling_facture_img_src" data-default-src="https://i.imgur.com/D065n7g.png">
+                <img src="https://i.imgur.com/D065n7g.png" alt="Feeling Facture" id="ability_feeling_facture_img_src" data-default-src="https://i.imgur.com/D065n7g.png" onerror="this.onerror=null; if (this.src !== this.dataset.defaultSrc) { this.src = this.dataset.defaultSrc; } else { this.src='https://placehold.co/400x200/393E46/F5F5F5?text=Feeling+Facture+Error'; }">
             </div>
 
             <div class="content-block">
@@ -367,15 +401,13 @@
                     <li class="editable-list-item"><strong>Tier 2 :</strong> Chaque entité traversée par Edaryl pendant le Soul Transfer subit des dégâts.</li>
                     <li class="editable-list-item"><strong>Tier 3 :</strong> Lorsqu'il atteint sa destination, Edaryl crée une petite explosion qui inflige des dégâts autour de lui.</li>
                 </ul>
-                <img src="https://i.imgur.com/V9x0z0y.png" alt="Soul Transfer" id="ability_soul_transfer_img_src" data-default-src="https://i.imgur.com/V9x0z0y.png">
+                <img src="https://i.imgur.com/V9x0z0y.png" alt="Soul Transfer" id="ability_soul_transfer_img_src" data-default-src="https://i.imgur.com/V9x0z0y.png" onerror="this.onerror=null; if (this.src !== this.dataset.defaultSrc) { this.src = this.dataset.defaultSrc; } else { this.src='https://placehold.co/400x200/393E46/F5F5F5?text=Soul+Transfer+Error'; }">
             </div>
             <div class="content-block">
                 <h3>Progression et Intention de Design</h3>
                 <p class="editable-text" id="abilities_progression">Toutes les capacités ne sont pas disponibles dès le début de l'aventure. Le joueur doit les obtenir au fil de sa progression en complétant les chapitres de l'histoire. Chaque fois qu'une nouvelle capacité est acquise, un court tutoriel pour apprendre à l'utiliser commence.</p>
                 <p class="editable-text" id="abilities_design_intention">L'intention de conception de ce système est de créer un sentiment de puissance croissante issu de la nature de la magie d'Edaryl. Le choix de créer des niveaux de capacités est fait pour éviter la multiplication de différentes capacités et perdre le joueur dans un schéma de construction de deck, tout en conservant des styles de combat variés ; cela réduit le coût de production et le risque de bugs. Nous voulons éviter les systèmes et interfaces superficiels qui peuvent submerger le joueur ; nous voulons qu'il se concentre sur l'histoire et essayer de lui faire ressentir ce qu'Edaryl peut ressentir pendant sa progression.</p>
             </div>
-        </div>
-
         </div>
 
         <div id="tab-environment" class="tab-content">
@@ -480,11 +512,12 @@
             }
             collectEditableElements();
             setupEventListeners();
-            // Ensure default images are set if src is missing
+            // Ensure default images are set if src is missing and provide fallback for errors
             document.querySelectorAll('img[data-default-src]').forEach(img => {
-                if (!img.src || img.src === window.location.href) {
+                if (!img.src || img.src === window.location.href) { // If src is empty or points to the page itself
                     img.src = img.dataset.defaultSrc;
                 }
+                // The onerror attribute is now directly in the <img> tag
             });
         });
         
@@ -500,9 +533,9 @@
                     mobileMenuButton.setAttribute('aria-expanded', !isExpanded);
                     mobileNavMenu.classList.toggle('open');
                     if (mobileNavMenu.classList.contains('open')) {
-                        mobileMenuIcon.setAttribute('d', 'M6 18L18 6M6 6l12 12');
+                        mobileMenuIcon.setAttribute('d', 'M6 18L18 6M6 6l12 12'); // Close icon
                     } else {
-                        mobileMenuIcon.setAttribute('d', 'M4 6h16M4 12h16M4 18h16');
+                        mobileMenuIcon.setAttribute('d', 'M4 6h16M4 12h16M4 18h16'); // Hamburger icon
                     }
                 });
             }
@@ -545,7 +578,7 @@
             messageBox.classList.add('show');
             setTimeout(() => {
                 messageBox.classList.remove('show');
-            }, 3500); // Increased duration for the message
+            }, 3500);
         }
 
     </script>
